@@ -1,0 +1,6 @@
+module(
+    name = "rules_rsync",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "rsync", version = "3.5.1")

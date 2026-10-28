@@ -1,0 +1,26 @@
+{
+  "name": "Ubuntu 24.04 – Claude Code, uv, Bazel",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "ubuntu",
+  "updateRemoteUserUID": true,
+  "mounts": [
+    "source=claude-config,target=/home/ubuntu/.claude,type=volume",
+    "source=bazel-cache,target=/home/ubuntu/.cache/bazel,type=volume",
+    "source=uv-cache,target=/home/ubuntu/.cache/uv,type=volume"
+  ],
+  "containerEnv": {
+    "UV_LINK_MODE": "copy"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "BazelBuild.vscode-bazel",
+        "ms-python.python"
+      ]
+    }
+  },
+  "postCreateCommand": "claude --version && uv --version"
+}
