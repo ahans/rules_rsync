@@ -1,3 +1,5 @@
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
+load("@rules_python//python:py_binary.bzl", "py_binary")
 load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
 load("//rsync:defs.bzl", "rsync_deploy", "rsync_run")
 
@@ -20,4 +22,28 @@ rsync_run(
     deploy = ":sh_app.deploy",
     remote_args = ["from attr"],
     remote_env = {"APP_ENV": "set by rsync_run"},
+)
+
+py_binary(
+    name = "py_app",
+    srcs = ["py_app.py"],
+    data = ["greeting.txt"],
+    deps = ["@rules_python//python/runfiles"],
+)
+
+rsync_deploy(
+    name = "py_app.deploy",
+    target = ":py_app",
+)
+
+cc_binary(
+    name = "cc_app",
+    srcs = ["cc_app.cc"],
+    data = ["greeting.txt"],
+    deps = ["@rules_cc//cc/runfiles"],
+)
+
+rsync_deploy(
+    name = "cc_app.deploy",
+    target = ":cc_app",
 )

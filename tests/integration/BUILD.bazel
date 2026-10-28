@@ -16,3 +16,16 @@ sh_test(
         "RUN": "$(rlocationpath //tests/testdata:sh_app.remote)",
     },
 )
+
+sh_test(
+    name = "binaries_test",
+    srcs = ["binaries_test.sh"],
+    data = [
+        "//tests/testdata:cc_app.deploy",
+        "//tests/testdata:py_app.deploy",
+    ],
+    env = {
+        "CC_DEPLOY": "$(rlocationpath //tests/testdata:cc_app.deploy)",
+        "PY_DEPLOY": "$(rlocationpath //tests/testdata:py_app.deploy)",
+    },
+)

@@ -130,7 +130,7 @@ ssh+=(${SSH_OPTS[@]+"${SSH_OPTS[@]}"})
 
 do_deploy() {
   local rsync="$RUNFILES/$RSYNC_RLOCATION"
-  local opts=(-rptL --chmod=u+w)
+  local opts=(-pt --chmod=u+w)
   ((verbose || dry_run)) && opts+=(--itemize-changes)
   ((dry_run)) && opts+=(--dry-run)
   opts+=(${RSYNC_OPTS[@]+"${RSYNC_OPTS[@]}"})
@@ -147,10 +147,13 @@ do_deploy() {
     mkdir -p "$dest"
   fi
 
-  "$rsync" "${opts[@]}" --delete --delete-excluded \
+  # The runfiles tree consists of absolute symlinks into Bazel's output base,
+  # which have to be copied as files. Relative symlinks within the tree (e.g.
+  # the interpreter of a Python venv) are kept, since tools resolve them.
+  "$rsync" "${opts[@]}" -rl --copy-unsafe-links --delete --delete-excluded \
     --exclude-from="$RUNFILES/$FILTER_RLOCATION" \
     "$RUNFILES/" "$prefix$dest/$BIN_NAME.runfiles/"
-  "$rsync" "${opts[@]}" "$RUNFILES/$BIN_RLOCATION" "$prefix$dest/$BIN_NAME"
+  "$rsync" "${opts[@]}" -L "$RUNFILES/$BIN_RLOCATION" "$prefix$dest/$BIN_NAME"
 
   if ((!dry_run)); then
     echo "rules_rsync: deployed $LABEL to ${host:+$host:}$dest" >&2
