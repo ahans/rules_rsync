@@ -101,6 +101,8 @@ def _rsync_deploy_impl(ctx):
     target = ctx.attr.target[0]
     target_info = target[DefaultInfo]
     executable = target_info.files_to_run.executable
+    if not executable:
+        fail("%s must be an executable target" % target.label)
     target_runfiles = target_info.default_runfiles
 
     filter = _write_filter(ctx, target_runfiles)

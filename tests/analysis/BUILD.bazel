@@ -1,0 +1,65 @@
+load("//rsync:defs.bzl", "rsync_deploy")
+load(":deploy_tests.bzl", "deploy_test_suite")
+load(":fake_binary.bzl", "fake_binary")
+
+deploy_test_suite(name = "deploy_tests")
+
+fake_binary(
+    name = "app",
+    data = [
+        "data.txt",
+        "odd[name]*.txt",
+    ],
+    root_symlinks = ["root_linked.txt"],
+    symlinks = ["linked.txt"],
+)
+
+rsync_deploy(
+    name = "app.deploy",
+    host = "attr-host",
+    tags = ["manual"],
+    target = ":app",
+)
+
+# A remote platform distinguished by a constraint only, so no toolchains are
+# needed to analyze targets for it.
+constraint_setting(name = "location")
+
+constraint_value(
+    name = "remote",
+    constraint_setting = ":location",
+)
+
+platform(
+    name = "remote_platform",
+    constraint_values = [":remote"],
+)
+
+fake_binary(
+    name = "selecting_app",
+    data = select({
+        ":remote": ["remote.txt"],
+        "//conditions:default": ["local.txt"],
+    }),
+)
+
+rsync_deploy(
+    name = "selecting_app.deploy",
+    platform = ":remote_platform",
+    tags = ["manual"],
+    target = ":selecting_app",
+)
+
+filegroup(
+    name = "not_executable",
+    srcs = [
+        "data.txt",
+        "local.txt",
+    ],
+)
+
+rsync_deploy(
+    name = "not_executable.deploy",
+    tags = ["manual"],
+    target = ":not_executable",
+)
