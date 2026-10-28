@@ -1,0 +1,23 @@
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("//rsync:defs.bzl", "rsync_deploy", "rsync_run")
+
+package(default_visibility = ["//tests:__subpackages__"])
+
+sh_binary(
+    name = "sh_app",
+    srcs = ["sh_app.sh"],
+    data = ["greeting.txt"],
+)
+
+rsync_deploy(
+    name = "sh_app.deploy",
+    target = ":sh_app",
+    host = "attr-host",
+)
+
+rsync_run(
+    name = "sh_app.remote",
+    deploy = ":sh_app.deploy",
+    remote_args = ["from attr"],
+    remote_env = {"APP_ENV": "set by rsync_run"},
+)
