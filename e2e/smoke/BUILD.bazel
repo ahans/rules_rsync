@@ -1,0 +1,25 @@
+load("@rules_rsync//rsync:defs.bzl", "rsync_deploy", "rsync_run")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+
+sh_binary(
+    name = "hello",
+    srcs = ["hello.sh"],
+)
+
+rsync_deploy(
+    name = "hello.deploy",
+    target = ":hello",
+)
+
+rsync_run(
+    name = "hello.remote",
+    deploy = ":hello.deploy",
+)
+
+sh_test(
+    name = "smoke_test",
+    srcs = ["smoke_test.sh"],
+    data = [":hello.remote"],
+    env = {"RUN": "$(rlocationpath :hello.remote)"},
+)

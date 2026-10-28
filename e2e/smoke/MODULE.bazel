@@ -1,0 +1,9 @@
+module(name = "rules_rsync_smoke")
+
+bazel_dep(name = "rules_rsync")
+local_path_override(
+    module_name = "rules_rsync",
+    path = "../..",
+)
+
+bazel_dep(name = "rules_shell", version = "0.8.0")
