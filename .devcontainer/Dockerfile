@@ -6,7 +6,7 @@ ARG USERNAME=ubuntu
 # Base tools + what Bazel typically needs
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl gnupg git sudo less \
-        build-essential python3 zip unzip \
+        build-essential python3 unzip vim zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Claude Code (Anthropic's signed apt repo, stable channel)
