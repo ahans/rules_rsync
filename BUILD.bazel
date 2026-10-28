@@ -1,0 +1,16 @@
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+
+# Overrides the `host` attribute of every rsync_deploy, e.g.
+# `bazel run --@rules_rsync//:host=user@robot //app:server.deploy`.
+string_flag(
+    name = "host",
+    build_setting_default = "",
+    visibility = ["//visibility:public"],
+)
+
+# Overrides the `dest` attribute of every rsync_deploy.
+string_flag(
+    name = "dest",
+    build_setting_default = "",
+    visibility = ["//visibility:public"],
+)
