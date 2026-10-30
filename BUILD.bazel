@@ -1,4 +1,6 @@
 load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+load("@rules_shell//shell:sh_binary.bzl", "sh_binary") 
+
 
 # Overrides the `host` attribute of every rsync_deploy, e.g.
 # `bazel run --@rules_rsync//:host=user@robot //app:server.deploy`.
@@ -12,5 +14,12 @@ string_flag(
 string_flag(
     name = "dest",
     build_setting_default = "",
+    visibility = ["//visibility:public"],
+)
+
+# wrapper for /usr/bin/rsync on the host (non-hermetic)
+sh_binary(
+    name = "host_rsync",
+    srcs = ["host_rsync_wrapper.sh"],
     visibility = ["//visibility:public"],
 )

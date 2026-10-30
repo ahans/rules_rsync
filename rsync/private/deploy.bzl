@@ -106,7 +106,7 @@ def _rsync_deploy_impl(ctx):
     target_runfiles = target_info.default_runfiles
 
     filter = _write_filter(ctx, target_runfiles)
-    rsync = ctx.executable._rsync
+    rsync = ctx.executable.rsync
 
     host = ctx.attr._host_flag[BuildSettingInfo].value or ctx.attr.host
     dest = (ctx.attr._dest_flag[BuildSettingInfo].value or ctx.attr.dest or
@@ -114,7 +114,7 @@ def _rsync_deploy_impl(ctx):
 
     runfiles = ctx.runfiles(files = [filter, rsync, executable]).merge_all([
         target_runfiles,
-        ctx.attr._rsync[DefaultInfo].default_runfiles,
+        ctx.attr.rsync[DefaultInfo].default_runfiles,
     ])
     info = RsyncDeployInfo(
         bin_name = executable.basename,
@@ -176,7 +176,7 @@ from the command line, `RULES_RSYNC_HOST`/`RULES_RSYNC_DEST`, the
             default = ":launcher.sh.tpl",
             allow_single_file = True,
         ),
-        "_rsync": attr.label(
+        "rsync": attr.label(
             default = "@rsync//:rsync",
             executable = True,
             cfg = "target",
