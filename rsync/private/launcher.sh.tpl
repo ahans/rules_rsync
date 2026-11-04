@@ -164,11 +164,11 @@ do_deploy() {
 ((RUN)) || exit 0
 ((dry_run)) && exit 0
 
-cmd="cd $(sh_quote "$dest") && exec env"
+cmd="cd $(sh_quote "$dest/$BIN_NAME.runfiles/_main") && exec env"
 for word in ${RUN_ENV[@]+"${RUN_ENV[@]}"}; do
   cmd+=" $(sh_quote "$word")"
 done
-cmd+=" ./$(sh_quote "$BIN_NAME")"
+cmd+=" ../../$(sh_quote "$BIN_NAME")"
 for word in ${binary_args[@]+"${binary_args[@]}"}; do
   cmd+=" $(sh_quote "$word")"
 done
