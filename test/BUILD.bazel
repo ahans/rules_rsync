@@ -1,0 +1,99 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python/uv:lock.bzl", "lock")
+load("@rules_shell//shell:sh_test.bzl", "sh_test")
+load("//rsync:defs.bzl", "rsync_deploy")
+
+lock(
+    name = "requirements",
+    srcs = ["requirements.in"],
+    out = "requirements_lock.txt",
+    args = ["--universal"],  # one lock file for all platforms
+)
+
+cc_binary(
+    name = "app_cc",
+    srcs = ["app.cc"],
+    data = [
+        "hello.txt",
+    ],
+    deps = [
+        "@rules_cc//cc/runfiles",
+    ],
+)
+
+rsync_deploy(
+    name = "app_cc_deploy",
+    binary = ":app_cc",
+)
+
+py_binary(
+    name = "app_py",
+    srcs = ["app.py"],
+    data = [
+        "hello.txt",
+    ],
+    main = "app.py",
+    deps = [
+        "@rules_python//python/runfiles",
+        "@rules_rsync_pypi//numpy",
+    ],
+)
+
+rsync_deploy(
+    name = "app_py_deploy",
+    binary = ":app_py",
+)
+
+platform(
+    name = "linux_aarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+rsync_deploy(
+    name = "app_py_aarch64_deploy",
+    binary = ":app_py",
+    platform = ":linux_aarch64",
+)
+
+sh_test(
+    name = "rsync_deploy_app_cc_test",
+    srcs = ["rsync_deploy_test.sh"],
+    args = [
+        "test/app_cc_deploy",
+        "app_cc",
+        "test/app_cc_expected_output.txt",
+    ],
+    data = [
+        "app_cc_expected_output.txt",
+        ":app_cc_deploy",
+    ],
+)
+
+sh_test(
+    name = "rsync_deploy_app_py_test",
+    srcs = ["rsync_deploy_test.sh"],
+    args = [
+        "test/app_py_deploy",
+        "app_py",
+        "test/app_py_expected_output.txt",
+    ],
+    data = [
+        "app_py_expected_output.txt",
+        ":app_py_deploy",
+    ],
+)
+
+sh_test(
+    name = "rsync_deploy_aarch64_test",
+    srcs = ["rsync_deploy_aarch64_test.sh"],
+    args = [
+        "test/app_py_aarch64_deploy",
+    ],
+    data = [
+        ":app_py_aarch64_deploy",
+    ],
+)

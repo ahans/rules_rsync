@@ -1,0 +1,4 @@
+Hello from Python!
+Checking if numpy is working...✅
+test/hello.txt:
+Hi from hello.txt!
