@@ -13,8 +13,9 @@ def _rsync_deploy_impl(ctx):
     binary = ctx.attr.binary[0]
     exe = binary[DefaultInfo].files_to_run.executable
     for v in [ctx.attr.host, ctx.attr.dest]:
-        if "'" in v:
-            fail("single quotes are not supported in dest/host")
+        for c in ["'", "\"", "$", "`", "\\"]:
+            if c in v:
+                fail("character %s is not supported in dest/host" % c)
 
     launcher = ctx.actions.declare_file(ctx.label.name)
     ctx.actions.expand_template(
