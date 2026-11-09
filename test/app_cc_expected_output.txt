@@ -1,0 +1,3 @@
+Hello from C++!
+test/hello.txt:
+Hi from hello.txt!
