@@ -15,8 +15,7 @@ test_deploy_app() {
 
     DEST="$TEST_TMPDIR" "$deploy_target"
     output_file="$TEST_TMPDIR/$app_target.output"
-    $TEST_TMPDIR/${app_target} > "$output_file"
-    [[ $0 != 0 ]] || fail "${app_target} did not run successfully"
+    "$TEST_TMPDIR/${app_target}" > "$output_file" || fail "${app_target} did not run successfully"
 
     diff -u "$output_file" "$expected_output_file" || fail "${app_target} didn't produce the expected output"
 
