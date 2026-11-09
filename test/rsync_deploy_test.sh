@@ -13,7 +13,7 @@ test_deploy_app() {
     local app_target="$2"
     local expected_output_file="$3"
 
-    DEST="$TEST_TMPDIR" "$deploy_target"
+    RSYNC_DEPLOY_DEST="$TEST_TMPDIR" "$deploy_target"
     output_file="$TEST_TMPDIR/$app_target.output"
     "$TEST_TMPDIR/${app_target}" > "$output_file" || fail "${app_target} did not run successfully"
 
@@ -30,9 +30,9 @@ test_deploy_app() {
 test_deploy_with_dest_unset() {
     local deploy_target="$1"
 
-    output=$(env -u DEST -u HOST "$deploy_target")
+    output=$(env -u RSYNC_DEPLOY_DEST -u RSYNC_DEPLOY_HOST "$deploy_target")
     [ $? != 0 ] || fail "$deploy_target did not return non-zero exit code"
-    [ "$output" == "error: either dest attribute or DEST env variable need to be set" ] || fail "$deploy_target did not print expected error message: $output"
+    [ "$output" == "error: either dest attribute or RSYNC_DEPLOY_DEST env variable need to be set" ] || fail "$deploy_target did not print expected error message: $output"
 }
 
 deploy_target="$1"

@@ -36,14 +36,14 @@ rsync_deploy(
 
 You can then `bazel run //foo/bar:app_deploy` to have Bazel build and sync the target using `rsync`.
 
-`host` and `dest` are optional. They can be provided via `HOST` and `DEST` environment variables as well.
+`host` and `dest` are optional. They can be provided via `RSYNC_DEPLOY_HOST` and `RSYNC_DEPLOY_DEST` environment variables as well.
 The following would be equivalent to the `bazel run` above:
 
 ```sh
-HOST=robot.domain.tld DEST=/home/user/deployments bazel run //foo/bar:app_deploy
+RSYNC_DEPLOY_HOST=robot.domain.tld RSYNC_DEPLOY_DEST=/home/user/deployments bazel run //foo/bar:app_deploy
 ```
 
-If both, attributes (`host`, `dest`) and environment variables (`HOST`, `DEST`), are given, the environment variables are used.
+If both, attributes (`host`, `dest`) and environment variables (`RSYNC_DEPLOY_HOST`, `RSYNC_DEPLOY_DEST`), are given, the environment variables are used.
 If `HOST`/`host` is empty, deployment happens on the local machine.
 
 See [test/BUILD.bazel](test/BUILD.bazel) for more examples.

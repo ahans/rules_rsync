@@ -10,10 +10,10 @@ which rsync > /dev/null 2>&1 || fail "rsync not found"
 
 binary="@BIN@"
 label="@LABEL@"
-host="${HOST:-@HOST@}"
-dest="${DEST:-@DEST@}"
+host="${RSYNC_DEPLOY_HOST:-@HOST@}"
+dest="${RSYNC_DEPLOY_DEST:-@DEST@}"
 
-[ "$dest" != "" ] || fail "either dest attribute or DEST env variable need to be set"
+[ "$dest" != "" ] || fail "either dest attribute or RSYNC_DEPLOY_DEST env variable need to be set"
 
 bin_name=$(basename "$binary")
 dst_path="${host:+$host:}$dest"

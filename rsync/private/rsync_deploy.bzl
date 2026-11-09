@@ -15,7 +15,7 @@ def _rsync_deploy_impl(ctx):
     for v in [ctx.attr.host, ctx.attr.dest]:
         for c in ["'", "\"", "$", "`", "\\"]:
             if c in v:
-                fail("character %s is not supported in dest/host" % c)
+                fail("character {} is not supported in dest/host".format(c))
 
     launcher = ctx.actions.declare_file(ctx.label.name)
     ctx.actions.expand_template(
