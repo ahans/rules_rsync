@@ -4,13 +4,6 @@ load("@rules_python//python/uv:lock.bzl", "lock")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
 load("//rsync:defs.bzl", "rsync_deploy")
 
-lock(
-    name = "requirements",
-    srcs = ["requirements.in"],
-    out = "requirements_lock.txt",
-    args = ["--universal"],  # one lock file for all platforms
-)
-
 cc_binary(
     name = "app_cc",
     srcs = ["app.cc"],
@@ -41,6 +34,12 @@ py_binary(
 )
 
 rsync_deploy(
+    name = "app_py_aarch64_deploy",
+    binary = ":app_py",
+    platform = ":linux_aarch64",
+)
+
+rsync_deploy(
     name = "app_py_deploy",
     binary = ":app_py",
 )
@@ -53,10 +52,22 @@ platform(
     ],
 )
 
-rsync_deploy(
-    name = "app_py_aarch64_deploy",
-    binary = ":app_py",
-    platform = ":linux_aarch64",
+lock(
+    name = "requirements",
+    srcs = ["requirements.in"],
+    out = "requirements_lock.txt",
+    args = ["--universal"],  # one lock file for all platforms
+)
+
+sh_test(
+    name = "rsync_deploy_aarch64_test",
+    srcs = ["rsync_deploy_aarch64_test.sh"],
+    args = [
+        "test/app_py_aarch64_deploy",
+    ],
+    data = [
+        ":app_py_aarch64_deploy",
+    ],
 )
 
 sh_test(
@@ -84,16 +95,5 @@ sh_test(
     data = [
         "app_py_expected_output.txt",
         ":app_py_deploy",
-    ],
-)
-
-sh_test(
-    name = "rsync_deploy_aarch64_test",
-    srcs = ["rsync_deploy_aarch64_test.sh"],
-    args = [
-        "test/app_py_aarch64_deploy",
-    ],
-    data = [
-        ":app_py_aarch64_deploy",
     ],
 )
