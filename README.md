@@ -44,7 +44,7 @@ RSYNC_DEPLOY_HOST=robot.domain.tld RSYNC_DEPLOY_DEST=/home/user/deployments baze
 ```
 
 If both, attributes (`host`, `dest`) and environment variables (`RSYNC_DEPLOY_HOST`, `RSYNC_DEPLOY_DEST`), are given, the environment variables are used.
-If `HOST`/`host` is empty, deployment happens on the local machine.
+If `RSYNC_DEPLOY_HOST`/`host` is empty, deployment happens on the local machine.
 
 See [test/BUILD.bazel](test/BUILD.bazel) for more examples.
 
