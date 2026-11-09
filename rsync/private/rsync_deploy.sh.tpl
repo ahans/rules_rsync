@@ -6,8 +6,7 @@ fail() {
     exit 1
 }
 
-which rsync > /dev/null 2>&1 || fail "rsync not found"
-
+rsync_rlocation="@RSYNC@"
 binary="@BIN@"
 label="@LABEL@"
 host="${RSYNC_DEPLOY_HOST:-@HOST@}"
@@ -32,7 +31,15 @@ fi
 
 [[ -z "$host" ]] && mkdir -p "$dest"
 
-rsync --recursive --links --copy-unsafe-links --exclude=/MANIFEST --mkpath --delete "$@" "$runfiles/" "$dst_path/$bin_name.runfiles/"
-rsync --copy-links "$@" "$runfiles/$binary" "$dst_path/$bin_name"
+rsync="$runfiles/$rsync_rlocation"
+
+# Deploy runfiles tree, excluding /MANIFEST (has absolute paths from build host) and the host-built rsync
+"$rsync" --recursive --links --copy-unsafe-links \
+    --exclude=/MANIFEST --exclude="/${rsync_rlocation%%/*}/" \
+    --mkpath --delete "$@" \
+    "$runfiles/" "$dst_path/$bin_name.runfiles/"
+
+# Deploy the launcher living next to the `.runfiles`
+"$rsync" --copy-links "$@" "$runfiles/$binary" "$dst_path/$bin_name"
 
 echo "Deployed $label to $dst_path."

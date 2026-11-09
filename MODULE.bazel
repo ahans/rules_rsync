@@ -26,6 +26,7 @@ pip.parse(
     python_version = "3.14",
     requirements_lock = "//test:requirements_lock.txt",
     target_platforms = [
+        "osx_aarch64",
         "linux_x86_64",
         "linux_aarch64",
     ],

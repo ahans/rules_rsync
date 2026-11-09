@@ -50,6 +50,6 @@ See [test/BUILD.bazel](test/BUILD.bazel) for more examples.
 
 ## Current limitations
 
-* `rsync` needs to be available on both local machine as well as the deployment target
-* only Linux is tested; macOS may work, Windows most probably won't
+* `rsync` 3.2.3 or newer needs to be installed on the deployment target (locally, a hermetic `rsync` built by Bazel is used)
+* only Linux and macOS are tested; Windows won't work
 * we can only deploy; running the target needs to happen manually

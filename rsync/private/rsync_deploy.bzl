@@ -27,11 +27,15 @@ def _rsync_deploy_impl(ctx):
             "@DEST@": ctx.attr.dest,
             "@BIN@": _rlocation(exe),
             "@LABEL@": str(binary.label).replace("@@//", "//"),
+            "@RSYNC@": _rlocation(ctx.executable._rsync),
         },
     )
     return DefaultInfo(
         executable = launcher,
-        runfiles = ctx.runfiles().merge(binary[DefaultInfo].default_runfiles),
+        runfiles = ctx.runfiles().merge_all([
+            binary[DefaultInfo].default_runfiles,
+            ctx.attr._rsync[DefaultInfo].default_runfiles,
+        ]),
     )
 
 rsync_deploy = rule(
@@ -47,5 +51,6 @@ rsync_deploy = rule(
         "host": attr.string(),
         "dest": attr.string(),
         "_template": attr.label(default = ":rsync_deploy.sh.tpl", allow_single_file = True),
+        "_rsync": attr.label(default = "@rsync//:rsync", executable = True, cfg = "target"),
     },
 )
