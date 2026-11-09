@@ -21,4 +21,4 @@ jobs:
           disk-cache: ${{ github.workflow }}
           repository-cache: true
 
-        run: bazel test //... --test_output=errors
+      - run: bazel test //... --test_output=errors
