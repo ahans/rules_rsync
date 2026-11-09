@@ -11,7 +11,7 @@ Add the following to `MODULE.bazel`:
 bazel_dep(name = "rules_rsync", dev_dependency = True)
 
 git_override(
-    module_name "rules_rsync",
+    module_name = "rules_rsync",
     commit = "<COMMIT-ID>", # put the commit ID you want (mostly latest)
     remote = "https://github.com/ahans/rules_rsync.git",
 )
