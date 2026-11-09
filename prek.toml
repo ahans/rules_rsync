@@ -11,6 +11,13 @@ hooks = [
 ]
 
 [[repos]]
+repo = "https://github.com/ahans/bazel-build-file-sorter"
+rev = "v0.3.0"
+hooks = [
+    { id = "bazel-build-file-sorter" },
+]
+
+[[repos]]
 repo = "https://github.com/keith/pre-commit-buildifier"
 rev = "10.1.0"
 hooks = [
