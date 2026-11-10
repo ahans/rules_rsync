@@ -44,12 +44,14 @@ RSYNC_DEPLOY_HOST=robot.domain.tld RSYNC_DEPLOY_DEST=/home/user/deployments baze
 ```
 
 If both, attributes (`host`, `dest`) and environment variables (`RSYNC_DEPLOY_HOST`, `RSYNC_DEPLOY_DEST`), are given, the environment variables are used.
-If `RSYNC_DEPLOY_HOST`/`host` is empty, deployment happens on the local machine.
+If the resulting host is empty, deployment happens on the local machine.
+Setting `RSYNC_DEPLOY_HOST` to an empty string deploys locally even if the `host` attribute is set.
+For a local deployment, `dest` must be an absolute path.
 
 See [test/BUILD.bazel](test/BUILD.bazel) for more examples.
 
 ## Current limitations
 
-* `rsync` needs to be available on both local machine as well as the deployment target
+* `rsync` needs to be available on the deployment target (locally, a hermetic `rsync` built by Bazel is used)
 * only Linux is tested; macOS may work, Windows most probably won't
 * we can only deploy; running the target needs to happen manually
