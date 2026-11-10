@@ -20,6 +20,13 @@ rsync_deploy(
     binary = ":app_cc",
 )
 
+# Has a host attribute that tests override with an empty RSYNC_DEPLOY_HOST.
+rsync_deploy(
+    name = "app_cc_remote_deploy",
+    binary = ":app_cc",
+    host = "unreachable.invalid",
+)
+
 py_binary(
     name = "app_py",
     srcs = ["app.py"],
@@ -67,6 +74,20 @@ sh_test(
     ],
     data = [
         ":app_py_aarch64_deploy",
+    ],
+)
+
+sh_test(
+    name = "rsync_deploy_app_cc_remote_test",
+    srcs = ["rsync_deploy_test.sh"],
+    args = [
+        "test/app_cc_remote_deploy",
+        "app_cc",
+        "test/app_cc_expected_output.txt",
+    ],
+    data = [
+        "app_cc_expected_output.txt",
+        ":app_cc_remote_deploy",
     ],
 )
 
