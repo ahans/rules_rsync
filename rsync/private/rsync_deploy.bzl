@@ -4,7 +4,12 @@ load("//rsync/private:transition.bzl", "platform_transition")
 
 visibility(["//rsync/..."])
 
-def _rlocation(f):
+RsyncDeployInfo = provider(
+    doc = "Where an rsync_deploy target puts its binary.",
+    fields = ["host", "dest", "bin_name"],
+)
+
+def rlocation(f):
     if f.short_path.startswith("../"):  # external repo
         return f.short_path[3:]
     return "_main/" + f.short_path
@@ -25,18 +30,25 @@ def _rsync_deploy_impl(ctx):
         substitutions = {
             "@HOST@": ctx.attr.host,
             "@DEST@": ctx.attr.dest,
-            "@BIN@": _rlocation(exe),
+            "@BIN@": rlocation(exe),
             "@LABEL@": str(binary.label).replace("@@//", "//"),
-            "@RSYNC@": _rlocation(ctx.executable._rsync),
+            "@RSYNC@": rlocation(ctx.executable._rsync),
         },
     )
-    return DefaultInfo(
-        executable = launcher,
-        runfiles = ctx.runfiles().merge_all([
-            binary[DefaultInfo].default_runfiles,
-            ctx.attr._rsync[DefaultInfo].default_runfiles,
-        ]),
-    )
+    return [
+        DefaultInfo(
+            executable = launcher,
+            runfiles = ctx.runfiles().merge_all([
+                binary[DefaultInfo].default_runfiles,
+                ctx.attr._rsync[DefaultInfo].default_runfiles,
+            ]),
+        ),
+        RsyncDeployInfo(
+            host = ctx.attr.host,
+            dest = ctx.attr.dest,
+            bin_name = exe.basename,
+        ),
+    ]
 
 rsync_deploy = rule(
     implementation = _rsync_deploy_impl,

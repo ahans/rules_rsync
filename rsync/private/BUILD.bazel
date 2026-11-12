@@ -1,1 +1,4 @@
-exports_files(["rsync_deploy.sh.tpl"])
+exports_files([
+    "rsync_deploy.sh.tpl",
+    "rsync_run.sh.tpl",
+])
