@@ -2,7 +2,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 load("@rules_python//python:defs.bzl", "py_binary")
 load("@rules_python//python/uv:lock.bzl", "lock")
 load("@rules_shell//shell:sh_test.bzl", "sh_test")
-load("//rsync:defs.bzl", "rsync_deploy")
+load("//rsync:defs.bzl", "rsync_deploy", "rsync_deploy_and_run", "rsync_run")
 
 cc_binary(
     name = "app_cc",
@@ -18,6 +18,16 @@ cc_binary(
 rsync_deploy(
     name = "app_cc_deploy",
     binary = ":app_cc",
+)
+
+rsync_deploy_and_run(
+    name = "app_cc_macro",
+    binary = ":app_cc",
+)
+
+rsync_run(
+    name = "app_cc_run",
+    deploy = ":app_cc_deploy",
 )
 
 py_binary(
@@ -42,6 +52,11 @@ rsync_deploy(
 rsync_deploy(
     name = "app_py_deploy",
     binary = ":app_py",
+)
+
+rsync_run(
+    name = "app_py_run",
+    deploy = ":app_py_deploy",
 )
 
 platform(
@@ -95,5 +110,47 @@ sh_test(
     data = [
         "app_py_expected_output.txt",
         ":app_py_deploy",
+    ],
+)
+
+sh_test(
+    name = "rsync_run_app_cc_macro_test",
+    srcs = ["rsync_run_test.sh"],
+    args = [
+        "test/app_cc_macro_run",
+        "app_cc",
+        "test/app_cc_expected_output.txt",
+    ],
+    data = [
+        "app_cc_expected_output.txt",
+        ":app_cc_macro_run",
+    ],
+)
+
+sh_test(
+    name = "rsync_run_app_cc_test",
+    srcs = ["rsync_run_test.sh"],
+    args = [
+        "test/app_cc_run",
+        "app_cc",
+        "test/app_cc_expected_output.txt",
+    ],
+    data = [
+        "app_cc_expected_output.txt",
+        ":app_cc_run",
+    ],
+)
+
+sh_test(
+    name = "rsync_run_app_py_test",
+    srcs = ["rsync_run_test.sh"],
+    args = [
+        "test/app_py_run",
+        "app_py",
+        "test/app_py_expected_output.txt",
+    ],
+    data = [
+        "app_py_expected_output.txt",
+        ":app_py_run",
     ],
 )
